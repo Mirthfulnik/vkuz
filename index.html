@@ -1155,7 +1155,11 @@
                 selectedDayKey = null;
                 const firstAvailable = monthElement.querySelector('.calendar-day.performance');
                 if (firstAvailable) {
-                    firstAvailable.click();
+                    const dayNumber = Number(firstAvailable.textContent);
+                    selectedDayKey = firstAvailable.dataset.dayKey;
+                    showEventDetails(monthDate, dayNumber);
+                    highlightSelectedDay();
+                    firstAvailable.focus({ preventScroll: true });
                 } else {
                     showEmptyState();
                 }
