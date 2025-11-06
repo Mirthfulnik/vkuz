@@ -1127,21 +1127,6 @@
 
             calendarStage.appendChild(monthElement);
 
-            requestAnimationFrame(() => {
-                monthElement.classList.add('is-active');
-            });
-
-            if (currentMonthElement) {
-                currentMonthElement.classList.remove('entering-from-bottom', 'entering-from-top');
-                currentMonthElement.classList.add(direction === 'next' ? 'leaving-to-top' : 'leaving-to-bottom');
-                const elementToRemove = currentMonthElement;
-                elementToRemove.addEventListener('transitionend', () => {
-                    if (elementToRemove.parentElement) {
-                        elementToRemove.parentElement.removeChild(elementToRemove);
-                    }
-                }, { once: true });
-            }
-
             currentMonthElement = monthElement;
 
             const existingSelection = Array.from(monthElement.querySelectorAll('.calendar-day.performance'))
