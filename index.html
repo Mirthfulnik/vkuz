@@ -812,7 +812,7 @@
             <div class="hero-inner">
                 <div class="artist-avatar" aria-hidden="true">
                     <div class="artist-avatar-frame">
-                        <img src="imeges/artist.svg" alt="Фото Вари Кузнецовой" />
+                        <img src="images/artist.jpg" alt="Фото Вари Кузнецовой" />
                     </div>
                 </div>
                 <div class="hero-copy">
@@ -857,7 +857,7 @@
             <div class="player-shell">
                 <div class="now-playing">
                     <div class="cover-frame">
-                        <img id="trackCover" src="imeges/holodno.svg" alt="Обложка выбранного трека" />
+                        <img id="trackCover" src="images/holodno.png" alt="Обложка выбранного трека" />
                     </div>
                     <div class="now-playing-info">
                         <span class="now-playing-label">Сейчас звучит</span>
@@ -1248,7 +1248,7 @@
                 title: 'Холодно',
                 artist: 'Варя Кузнецова',
                 src: 'https://fine.sunproxy.net/file/VGIvMTVqcTdmQVdTQXI1cnNHVFI1anh4a2c1YVZRem5LVFhxOXUreE03QytVOWMvWWhyWGJIQ3pKcDdZaDFNZFpYVHJtUlkyNlRIUHVQT2xyc3YwTDRHV25FR2g1dE1FT2h5U2RBNERWbEE9/Varya_Kuznecova_-_Holodno_(TheMP3.Info).mp3',
-                cover: 'imeges/holodno.svg',
+                cover: 'images/holodno.png',
                 links: {
                     yandex: 'https://music.yandex.ru/album/35070253?utm_source=bandlink&utm_medium=%D0%92%D0%B0%D1%80%D1%8F%20%D0%9A%D1%83%D0%B7%D0%BD%D0%B5%D1%86%D0%BE%D0%B2%D0%B0&utm_campaign=%D0%A5%D0%BE%D0%BB%D0%BE%D0%B4%D0%BD%D0%BE&utm_term=P5gdA',
                     vk: 'https://music.vk.com/link/JzjyT',
@@ -1261,7 +1261,7 @@
                 title: 'Кошка',
                 artist: 'Варя Кузнецова',
                 src: 'https://fine.sunproxy.net/file/VGIvMTVqcTdmQVdTQXI1cnNHVFI1anh4a2c1YVZRem5LVFhxOXUreE03QytVOWMvWWhyWGJIQ3pKcDdZaDFNZDNnTnVkYzBROFJYYis4Y2VaZ2pYTVdpb2ZCcEFMSFliY1RoUmtGbWV2V3c9/Varya_Kuznecova_-_Koshka_(TheMP3.Info).mp3',
-                cover: 'imeges/koshka.svg',
+                cover: 'images/koshka.jpeg',
                 links: {
                     yandex: 'https://music.yandex.ru/album/35905040?utm_source=bandlink&utm_medium=%D0%92%D0%B0%D1%80%D1%8F%20%D0%9A%D1%83%D0%B7%D0%BD%D0%B5%D1%86%D0%BE%D0%B2%D0%B0&utm_campaign=%D0%9A%D0%BE%D1%88%D0%BA%D0%B0&utm_term=uuhVz',
                     vk: 'https://music.vk.com/link/nqmOx',
@@ -1326,7 +1326,7 @@
             const track = tracks[index];
             currentTrackIndex = index;
             audio.src = track.src;
-            trackCover.src = track.cover || 'imeges/holodno.svg';
+            trackCover.src = track.cover ||'images/holodno.png';
             trackCover.alt = `Обложка трека «${track.title}»`;
             trackTitle.textContent = track.title;
             trackArtist.textContent = track.artist || '';
