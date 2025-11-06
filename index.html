@@ -777,6 +777,16 @@
                         border-color var(--transition-duration) var(--transition-snappy),
                         box-shadow var(--transition-duration) var(--transition-snappy);
         }
+        
+        @media (max-width: 480px) {
+            .streaming-grid {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            .streaming-card {
+                padding: 16px;
+            }
+        }
 
         .streaming-card:hover {
             transform: translateY(-4px);
