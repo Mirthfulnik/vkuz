@@ -577,11 +577,49 @@ html {
             font-size: 18px;
         }
 
+@media (min-width: 1024px) {
+    .calendar-stage {
+        min-height: 420px; /* было 560 */
+    }
+}
+
         @media (min-width: 1024px) {
-            .calendar-stage {
-                min-height: 560px;
-            }
-        }
+    /* меньше общий «карточный» отступ секции календаря */
+    .calendar-section.section-card {
+        padding: 32px 32px 28px;
+    }
+
+    /* компактнее сетка внутри месяца */
+    .calendar-month {
+        padding: 20px 24px;
+        gap: 12px;
+    }
+
+    .calendar-weekdays,
+    .calendar-grid {
+        gap: 8px;
+    }
+
+    .weekday {
+        font-size: 12px;
+    }
+
+    .calendar-day {
+        border-radius: 18px;
+        font-size: 14px;
+    }
+
+    .calendar-day.special::after {
+        top: 6px;
+        right: 8px;
+        font-size: 12px;
+    }
+
+    .calendar-day.pencil-ring::before {
+        inset: -6%;
+    }
+}
+
 
         @media (max-width: 600px) {
     .calendar-stage {
