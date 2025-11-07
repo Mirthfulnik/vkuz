@@ -200,6 +200,14 @@ html {
             letter-spacing: 2px;
         }
 
+        /* Центруем заголовки у календаря и музыки */
+            .calendar-section .section-title,
+            .music-section .section-title {
+            text-align: center;
+            width: 100%;
+        }
+
+
         .section-subtitle {
             margin: 0 0 32px;
             font-size: 18px;
@@ -307,7 +315,7 @@ html {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    align-items: flex-start;
+    align-items: center;
 }
 
 .calendar-month-label {
@@ -320,7 +328,7 @@ html {
 
 
 .calendar-controls {
-    margin-top: 16px;
+    margin-top: -12px; 
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1281,31 +1289,38 @@ const fundraisingStages = [
     { threshold: 100, text: 'Bitches' }
 ];
 
-        const fundraisingPercent = Math.max(0, Math.min(100, (fundraisingCurrent / fundraisingGoal) * 100));
+const fundraisingPercent = Math.max(
+    0,
+    Math.min(100, (fundraisingCurrent / fundraisingGoal) * 100)
+);
 
-        const canvas = document.getElementById('bitchesCanvas');
-        const ctx = canvas.getContext('2d');
-        let textToDraw = 'B';
-        let dashOffset = 0;
-        let dashLength = 1200;
-        let animationFrame = null;
-        let lastCanvasWidth = 0;
+const canvas = document.getElementById('bitchesCanvas');
+const ctx = canvas.getContext('2d');
+const fullWord = 'Bitches';
 
-        function getStageText(percent) {
-            let result = fundraisingStages[0].text;
-            fundraisingStages.forEach(stage => {
-                if (percent >= stage.threshold) {
-                    result = stage.text;
-                }
-            });
-            return result;
+let coloredLettersCount = 1;
+let lastCanvasWidth = 0;
+
+function getStageText(percent) {
+    let result = fundraisingStages[0].text;
+    fundraisingStages.forEach(stage => {
+        if (percent >= stage.threshold) {
+            result = stage.text;
         }
+    });
+    return result;
+}
+
+function updateColoredLetters() {
+    // длина строки Bi / Bit / ... = сколько букв красим розовым
+    coloredLettersCount = getStageText(fundraisingPercent).length;
+}
 
 function resizeCanvas() {
     const ratio = window.devicePixelRatio || 1;
-    const containerRect = canvas.parentElement.getBoundingClientRect();
-    const displayWidth = containerRect.width;
-    const displayHeight = displayWidth / 3.6; // та же пропорция
+    const rect = canvas.parentElement.getBoundingClientRect();
+    const displayWidth = rect.width;
+    const displayHeight = displayWidth / 3.6; // пропорция как в CSS
 
     lastCanvasWidth = displayWidth;
 
@@ -1317,48 +1332,18 @@ function resizeCanvas() {
     ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
 
     const isMobile = window.matchMedia('(max-width: 600px)').matches;
-    const fontScale = isMobile ? 0.145 : 0.18; // на мобиле шрифт чуть меньше
+    const fontScale = isMobile ? 0.145 : 0.18;
     const baseFont = Math.max(42, Math.min(displayWidth * fontScale, 110));
 
     ctx.font = `${baseFont}px "Excalifont", sans-serif`;
-    ctx.textAlign = 'center';
+    ctx.textAlign = 'left';
     ctx.textBaseline = 'middle';
-
-    dashLength = ctx.measureText(textToDraw).width * 1.4;
-    dashOffset = dashLength;
 }
 
-
-function playCanvasAnimation(force = false) {
-    const containerWidth = canvas.parentElement.getBoundingClientRect().width;
-
-    // Если изменилась только высота (из-за адресной строки), а ширина та же — не перезапускаем анимацию
-    if (!force && Math.abs(containerWidth - lastCanvasWidth) < 1) {
-        return;
-    }
-
-    cancelAnimationFrame(animationFrame);
-    textToDraw = getStageText(fundraisingPercent);
-    resizeCanvas();
-    drawFrame();
-}
-
-const debouncedResize = (() => {
-    let timeout;
-    return () => {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => {
-            playCanvasAnimation(false);
-        }, 180);
-    };
-})();
-
-window.addEventListener('resize', debouncedResize);
-document.fonts.ready.then(() => playCanvasAnimation(true));
-
-function drawFrame() {
+function drawWord() {
     const ratio = window.devicePixelRatio || 1;
     const logicalWidth = canvas.width / ratio;
+    const logicalHeight = canvas.height / ratio;
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -1366,30 +1351,61 @@ function drawFrame() {
     const strokeThickness = isMobile ? 6 : 10;
     const blur = isMobile ? 16 : 24;
 
-    ctx.lineWidth = strokeThickness;
+    const activeColor = '#F294C0';                       // розовые буквы
+    const inactiveColor = 'rgba(248, 245, 255, 0.35)';   // серые буквы
+
     ctx.lineJoin = 'round';
     ctx.lineCap = 'round';
-    ctx.strokeStyle = '#F294C0';
-    ctx.shadowColor = 'rgba(242, 148, 192, 0.4)';
-    ctx.shadowBlur = blur;
 
-    ctx.setLineDash([dashLength, dashLength]);
-    ctx.lineDashOffset = dashOffset;
+    const letters = fullWord.split('');
+    const metrics = letters.map(ch => ctx.measureText(ch).width);
+    const avgWidth = metrics.reduce((a, w) => a + w, 0) / letters.length;
+    const letterSpacing = avgWidth * 0.18;
 
-    const x = logicalWidth / 2;
-    const y = (canvas.height / ratio) / 2;
+    const totalWidth =
+        metrics.reduce((a, w) => a + w, 0) + letterSpacing * (letters.length - 1);
 
-    ctx.strokeText(textToDraw, x, y);
+    let x = (logicalWidth - totalWidth) / 2;
+    const y = logicalHeight / 2;
 
-    if (dashOffset > 0) {
-        dashOffset -= Math.max(6, dashLength / 90);
-        animationFrame = requestAnimationFrame(drawFrame);
-    } else {
-        ctx.setLineDash([]);
-        ctx.strokeText(textToDraw, x, y);
-    }
+    letters.forEach((ch, index) => {
+        const isActive = index < coloredLettersCount;
+
+        ctx.shadowBlur = isActive ? blur : 0;
+        ctx.shadowColor = isActive ? 'rgba(242, 148, 192, 0.6)' : 'transparent';
+        ctx.lineWidth = strokeThickness;
+        ctx.strokeStyle = isActive ? activeColor : inactiveColor;
+
+        ctx.strokeText(ch, x, y);
+        x += metrics[index] + letterSpacing;
+    });
 }
 
+function renderFundraisingWord(force = false) {
+    if (!canvas) return;
+
+    const containerWidth = canvas.parentElement.getBoundingClientRect().width;
+    if (!force && Math.abs(containerWidth - lastCanvasWidth) < 1) {
+        return;
+    }
+
+    updateColoredLetters();
+    resizeCanvas();
+    drawWord();
+}
+
+const debouncedResize = (() => {
+    let timeout;
+    return () => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+            renderFundraisingWord(false);
+        }, 180);
+    };
+})();
+
+window.addEventListener('resize', debouncedResize);
+document.fonts.ready.then(() => renderFundraisingWord(true));
 
         /* Audio player */
         const tracks = [
