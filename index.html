@@ -853,9 +853,12 @@
                 </div>
                 <div class="fundraising-canvas">
                     <canvas id="bitchesCanvas" aria-hidden="true"></canvas>
-                </div>
                 <div class="fundraising-stats">
-                    <span>Собрано: <strong>150 000 ₽</strong> из 250 000 ₽</span>
+                    <span>
+                        Собрано:
+                        <strong id="fundraisingCurrent" data-amount="150000">150 000 ₽</strong>
+                        из 250 000 ₽
+                    </span>
                     <span>Цель: снять клип до конца осени.</span>
                 </div>
                 <a class="support-btn" href="https://pay.cloudtips.ru/p/ee1db799" target="_blank" rel="noopener">✨ Поддержать</a>
@@ -1180,18 +1183,30 @@
 
         renderCalendar();
 
-        /* Fundraising canvas animation */
-        const fundraisingCurrent = 5000;
-        const fundraisingGoal = 250000;
-        const fundraisingStages = [
-            { threshold: 0, text: 'B' },
-            { threshold: 15, text: 'Bi' },
-            { threshold: 30, text: 'Bit' },
-            { threshold: 50, text: 'Bitc' },
-            { threshold: 75, text: 'Bitch' },
-            { threshold: 90, text: 'Bitche' },
-            { threshold: 100, text: 'Bitches' }
-        ];
+/* Fundraising canvas animation */
+
+// берём сумму из разметки
+const fundraisingGoal = 250000;
+const fundraisingCurrentEl = document.getElementById('fundraisingCurrent');
+const fundraisingCurrent = fundraisingCurrentEl
+    ? parseInt(fundraisingCurrentEl.dataset.amount, 10)
+    : 0;
+
+// пороги по таблице (в процентах)
+const fundraisingStages = [
+    { threshold: 0,  text: 'B' },
+    { threshold: 20, text: 'Bi' },
+    { threshold: 30, text: 'Bit' },
+    { threshold: 50, text: 'Bitc' },
+    { threshold: 70, text: 'Bitch' },
+    { threshold: 90, text: 'Bitche' },
+    { threshold: 100, text: 'Bitches' }
+];
+
+const fundraisingPercent = Math.max(
+    0,
+    Math.min(100, (fundraisingCurrent / fundraisingGoal) * 100)
+);
 
         const fundraisingPercent = Math.max(0, Math.min(100, (fundraisingCurrent / fundraisingGoal) * 100));
 
