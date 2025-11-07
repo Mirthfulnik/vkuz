@@ -356,18 +356,17 @@ html {
             background: rgba(242, 148, 192, 0.28);
         }
 
-        .calendar-stage {
-            position: relative;
-            display: grid;
-            grid-template-columns: 1fr;
-            grid-auto-rows: auto;
-            min-height: 380px; /* было 460px */
-            border-radius: var(--radius-base);
-            border: 1px solid rgba(242, 148, 192, 0.22);
-            background: linear-gradient(135deg, rgba(11, 23, 46, 0.9), rgba(6, 13, 32, 0.9));
-            overflow: hidden;
-        }
-
+.calendar-stage {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-auto-rows: auto;
+    /* min-height больше не нужен */
+    border-radius: var(--radius-base);
+    border: 1px solid rgba(242, 148, 192, 0.22);
+    background: linear-gradient(135deg, rgba(11, 23, 46, 0.9), rgba(6, 13, 32, 0.9));
+    overflow: hidden;
+}
 
         .calendar-month {
             position: relative;
@@ -654,11 +653,7 @@ html {
 }
 
 
-        @media (max-width: 600px) {
-    .calendar-stage {
-        min-height: 0;
-    }
-
+@media (max-width: 600px) {
     .calendar-month {
         padding: 20px 16px;
     }
@@ -674,6 +669,7 @@ html {
         font-size: 14px;
     }
 }
+
 
         /* Music */
         .music-section {
