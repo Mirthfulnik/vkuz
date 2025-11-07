@@ -1268,7 +1268,7 @@ function resizeCanvas() {
     const ratio = window.devicePixelRatio || 1;
     const containerRect = canvas.parentElement.getBoundingClientRect();
     const displayWidth = containerRect.width;
-    const displayHeight = displayWidth / 3.6; // та же пропорция, что в CSS
+    const displayHeight = displayWidth / 3.6; // та же пропорция
 
     lastCanvasWidth = displayWidth;
 
@@ -1278,13 +1278,19 @@ function resizeCanvas() {
     canvas.style.height = `${displayHeight}px`;
 
     ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-    const baseFont = Math.max(48, Math.min(displayWidth * 0.18, 110));
+
+    const isMobile = window.matchMedia('(max-width: 600px)').matches;
+    const fontScale = isMobile ? 0.145 : 0.18; // на мобиле шрифт чуть меньше
+    const baseFont = Math.max(42, Math.min(displayWidth * fontScale, 110));
+
     ctx.font = `${baseFont}px "Excalifont", sans-serif`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
+
     dashLength = ctx.measureText(textToDraw).width * 1.4;
     dashOffset = dashLength;
 }
+
 
 function playCanvasAnimation(force = false) {
     const containerWidth = canvas.parentElement.getBoundingClientRect().width;
@@ -1313,26 +1319,40 @@ const debouncedResize = (() => {
 window.addEventListener('resize', debouncedResize);
 document.fonts.ready.then(() => playCanvasAnimation(true));
 
-        function drawFrame() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.lineWidth = 10;
-            ctx.lineJoin = 'round';
-            ctx.lineCap = 'round';
-            ctx.strokeStyle = '#F294C0';
-            ctx.shadowColor = 'rgba(242, 148, 192, 0.4)';
-            ctx.shadowBlur = 24;
-            ctx.setLineDash([dashLength, dashLength]);
-            ctx.lineDashOffset = dashOffset;
-            ctx.strokeText(textToDraw, canvas.width / (window.devicePixelRatio || 1) / 2, canvas.height / (window.devicePixelRatio || 1) / 2);
+function drawFrame() {
+    const ratio = window.devicePixelRatio || 1;
+    const logicalWidth = canvas.width / ratio;
 
-            if (dashOffset > 0) {
-                dashOffset -= Math.max(6, dashLength / 90);
-                animationFrame = requestAnimationFrame(drawFrame);
-            } else {
-                ctx.setLineDash([]);
-                ctx.strokeText(textToDraw, canvas.width / (window.devicePixelRatio || 1) / 2, canvas.height / (window.devicePixelRatio || 1) / 2);
-            }
-        }
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const isMobile = logicalWidth < 480;
+    const strokeThickness = isMobile ? 6 : 10;
+    const blur = isMobile ? 16 : 24;
+
+    ctx.lineWidth = strokeThickness;
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = '#F294C0';
+    ctx.shadowColor = 'rgba(242, 148, 192, 0.4)';
+    ctx.shadowBlur = blur;
+
+    ctx.setLineDash([dashLength, dashLength]);
+    ctx.lineDashOffset = dashOffset;
+
+    const x = logicalWidth / 2;
+    const y = (canvas.height / ratio) / 2;
+
+    ctx.strokeText(textToDraw, x, y);
+
+    if (dashOffset > 0) {
+        dashOffset -= Math.max(6, dashLength / 90);
+        animationFrame = requestAnimationFrame(drawFrame);
+    } else {
+        ctx.setLineDash([]);
+        ctx.strokeText(textToDraw, x, y);
+    }
+}
+
 
         /* Audio player */
         const tracks = [
