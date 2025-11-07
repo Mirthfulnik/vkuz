@@ -588,70 +588,8 @@ html {
         max-width: 760px;
         margin: 0 auto;
         min-height: 340px;
+        }
     }
-
-    /* компактнее контент внутри месяца */
-    .calendar-month {
-        padding: 16px 18px;
-        gap: 10px;
-    }
-
-    .calendar-weekdays,
-    .calendar-grid {
-        gap: 8px;
-    }
-
-    .weekday {
-        font-size: 12px;
-    }
-
-    .calendar-day {
-        border-radius: 16px;
-        font-size: 14px;
-    }
-
-    .calendar-day.special::after {
-        top: 6px;
-        right: 8px;
-        font-size: 12px;
-    }
-
-    .calendar-day.pencil-ring::before {
-        inset: -4%;
-    }
-}
-
-    /* компактнее сетка внутри месяца */
-    .calendar-month {
-        padding: 20px 24px;
-        gap: 12px;
-    }
-
-    .calendar-weekdays,
-    .calendar-grid {
-        gap: 8px;
-    }
-
-    .weekday {
-        font-size: 12px;
-    }
-
-    .calendar-day {
-        border-radius: 18px;
-        font-size: 14px;
-    }
-
-    .calendar-day.special::after {
-        top: 6px;
-        right: 8px;
-        font-size: 12px;
-    }
-
-    .calendar-day.pencil-ring::before {
-        inset: -6%;
-    }
-}
-
 
 @media (max-width: 600px) {
     .calendar-month {
@@ -1062,25 +1000,24 @@ html {
             'июль', 'август', 'сентябрь', 'октябрь', 'ноябрь', 'декабрь'
         ];
 
-        const performanceSchedule = {
-            '2025-11': {
-                2: { dayLabel: 'вс', time: '21:00 – 00:00', venue: 'бар «Берг-Коллегия»', metro: 'м. Кропоткинская / Парк Культуры', address: 'Берг-Коллегия, Москва' },
-                8: { dayLabel: 'сб', time: '21:00 – 00:00', venue: 'бар «Берг-Коллегия»', metro: 'м. Кропоткинская / Парк Культуры', address: 'Берг-Коллегия, Москва' },
-                11: { dayLabel: 'вт', time: '19:00', venue: 'бар «Really?»', metro: 'м. Китай-город', address: 'Малый Златоустинский пер., 3с1, Москва', special: 'Квартирник · День рождения' },
-                13: { dayLabel: 'чт', time: '20:00 – 22:00', venue: 'бар «Курорт»', metro: 'м. Новокузнецкая / Третьяковская', address: 'Курорт, Москва' },
-                14: { dayLabel: 'пт', time: '21:00 – 23:00', venue: 'бар «И в горе и в радости»', metro: 'м. Сухаревская', address: 'И в горе и в радости, Москва' },
-                15: { dayLabel: 'сб', time: '21:00 – 00:00', venue: 'бар «Берг-Коллегия»', metro: 'м. Кропоткинская / Парк Культуры', address: 'Берг-Коллегия, Москва' },
-                20: { dayLabel: 'чт', time: '21:00 – 23:00', venue: 'бар «Fest bar»', metro: 'м. Пушкинская', address: 'Fest bar, Москва' },
-                21: { dayLabel: 'пт', time: '20:00 – 23:00', venue: 'HookahPlace Lago', metro: 'м. Озёрная', address: 'HookahPlace Lago, ул. Озёрная, Москва' },
-                22: { dayLabel: 'сб', time: '21:00 – 00:00', venue: 'бар «Берг-Коллегия»', metro: 'м. Кропоткинская / Парк Культуры', address: 'Берг-Коллегия, Москва' },
-                23: { dayLabel: 'вс', time: '18:00 – 20:00', venue: 'бар «Моряк и чайка»', metro: 'м. Новокузнецкая / Третьяковская', address: 'Моряк и чайка, Москва' },
-                27: { dayLabel: 'чт', time: '20:00 – 22:00', venue: 'бар «Курорт»', metro: 'м. Новокузнецкая / Третьяковская', address: 'Курорт, Москва' },
-                28: { dayLabel: 'пт', time: '20:00 – 22:00', venue: 'паб «Маккларенс»', metro: 'м. Преображенская площадь', address: 'Маккларенс, Москва' },
-                29: { dayLabel: 'сб', time: '21:00 – 00:00', venue: 'бар «Берг-Коллегия»', metro: 'м. Кропоткинская / Парк Культуры', address: 'Берг-Коллегия, Москва' }
-            }
-        };
+      const performanceSchedule = {
+    '2025-11': {
+        2: { dayLabel: 'вс', time: '21:00 – 00:00', venue: 'бар «Берг-Коллегия»', metro: 'м. Кропоткинская / Парк Культуры', address: 'Берг-Коллегия, Москва' },
+        8: { dayLabel: 'сб', time: '21:00 – 00:00', venue: 'бар «Берг-Коллегия»', metro: 'м. Кропоткинская / Парк Культуры', address: 'Берг-Коллегия, Москва' },
+        11: { dayLabel: 'вт', time: '19:00', venue: 'бар «Really?»', metro: 'м. Китай-город', address: 'Малый Златоустинский пер., 3с1, Москва', special: 'Квартирник · День рождения' },
+        13: { dayLabel: 'чт', time: '20:00 – 22:00', venue: 'бар «Курорт»', metro: 'м. Новокузнецкая / Третьяковская', address: 'Курорт, Москва' },
+        14: { dayLabel: 'пт', time: '21:00 – 23:00', venue: 'бар «И в горе и в радости»', metro: 'м. Сухаревская', address: 'И в горе и в радости, Москва' },
+        15: { dayLabel: 'сб', time: '21:00 – 00:00', venue: 'бар «Берг-Коллегия»', metro: 'м. Кропоткинская / Парк Культуры', address: 'Берг-Коллегия, Москва' },
+        20: { dayLabel: 'чт', time: '21:00 – 23:00', venue: 'бар «Fest bar»', metro: 'м. Пушкинская', address: 'Fest bar, Москва' },
+        21: { dayLabel: 'пт', time: '20:00 – 23:00', venue: 'HookahPlace Lago', metro: 'м. Озёрная', address: 'HookahPlace Lago, ул. Озёрная, Москва' },
+        22: { dayLabel: 'сб', time: '21:00 – 00:00', venue: 'бар «Берг-Коллегия»', metro: 'м. Кропоткинская / Парк Культуры', address: 'Берг-Коллегия, Москва' },
+        23: { dayLabel: 'вс', time: '18:00 – 20:00', venue: 'бар «Моряк и чайка»', metro: 'м. Новокузнецкая / Третьяковская', address: 'Моряк и чайка, Москва' },
+        27: { dayLabel: 'чт', time: '20:00 – 22:00', venue: 'бар «Курорт»', metro: 'м. Новокузнецкая / Третьяковская', address: 'Курорт, Москва' },
+        28: { dayLabel: 'пт', time: '20:00 – 22:00', venue: 'паб «Маккларенс»', metro: 'м. Преображенская площадь', address: 'Маккларенс, Москва' },
+        29: { dayLabel: 'сб', time: '21:00 – 00:00', venue: 'бар «Берг-Коллегия»', metro: 'м. Кропоткинская / Парк Культуры', address: 'Берг-Коллегия, Москва' }
+    },
 
-        '2025-12': {
+    '2025-12': {
         5: {
             dayLabel: 'пт',
             time: '20:00 – 23:00',
@@ -1104,7 +1041,6 @@ html {
         }
     }
 };
-
         [
             '2025-12', '2026-01', '2026-02', '2026-03', '2026-04', '2026-05', '2026-06', '2026-07',
             '2026-08', '2026-09', '2026-10', '2026-11', '2026-12'
