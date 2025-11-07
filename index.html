@@ -1334,26 +1334,6 @@ document.fonts.ready.then(() => playCanvasAnimation(true));
             }
         }
 
-        function playCanvasAnimation() {
-            cancelAnimationFrame(animationFrame);
-            textToDraw = getStageText(fundraisingPercent);
-            resizeCanvas();
-            drawFrame();
-        }
-
-        const debouncedResize = (() => {
-            let timeout;
-            return () => {
-                clearTimeout(timeout);
-                timeout = setTimeout(() => {
-                    playCanvasAnimation();
-                }, 180);
-            };
-        })();
-
-        window.addEventListener('resize', debouncedResize);
-        document.fonts.ready.then(playCanvasAnimation);
-
         /* Audio player */
         const tracks = [
             {
