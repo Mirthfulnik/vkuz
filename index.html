@@ -1210,11 +1210,6 @@ const fundraisingStages = [
     { threshold: 100, text: 'Bitches' }
 ];
 
-const fundraisingPercent = Math.max(
-    0,
-    Math.min(100, (fundraisingCurrent / fundraisingGoal) * 100)
-);
-
         const fundraisingPercent = Math.max(0, Math.min(100, (fundraisingCurrent / fundraisingGoal) * 100));
 
         const canvas = document.getElementById('bitchesCanvas');
