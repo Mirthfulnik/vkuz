@@ -50,6 +50,10 @@
             padding: 0;
             margin: 0;
         }
+        
+html {
+    background-color: #020714; /* основной ночной цвет */
+}
 
         body {
             min-height: 100vh;
@@ -62,6 +66,12 @@
             line-height: 1.55;
             -webkit-font-smoothing: antialiased;
         }
+
+        @media (max-width: 768px) {
+    body {
+        background-attachment: scroll;
+    }
+}
 
         a {
             color: inherit;
@@ -232,7 +242,18 @@
             flex-direction: column;
             gap: 12px;
             font-size: 18px;
+            text-align: center;
         }
+
+        .fundraising-break {
+    display: none;
+}
+
+@media (max-width: 480px) {
+    .fundraising-break {
+        display: block;
+    }
+}
 
         .fundraising-stats strong {
             color: var(--color-gold);
@@ -550,21 +571,25 @@
         }
 
         @media (max-width: 600px) {
-            .calendar-month {
-                padding: 20px 16px;
-            }
-            .calendar-weekdays,
-            .calendar-grid {
-                gap: 6px;
-            }
-            .weekday {
-                font-size: 12px;
-            }
-            .calendar-day {
-                border-radius: 16px;
-                font-size: 14px;
-            }
-        }
+    .calendar-stage {
+        min-height: 0;
+    }
+
+    .calendar-month {
+        padding: 20px 16px;
+    }
+    .calendar-weekdays,
+    .calendar-grid {
+        gap: 6px;
+    }
+    .weekday {
+        font-size: 12px;
+    }
+    .calendar-day {
+        border-radius: 16px;
+        font-size: 14px;
+    }
+}
 
         /* Music */
         .music-section {
@@ -693,10 +718,17 @@
         }
 
         .player-controls {
-            display: flex;
-            gap: 16px;
-            align-items: center;
-        }
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+@media (max-width: 640px) {
+    .player-controls {
+        justify-content: center;
+    }
+}
 
         .control-btn {
             width: 52px;
@@ -856,14 +888,15 @@
               <canvas id="bitchesCanvas" aria-hidden="true"></canvas>
             </div>
               
-            <div class="fundraising-stats">
-              <span>
-                Собрано:
-                <strong id="fundraisingCurrent" data-amount="250000">250 000 ₽</strong>
-                из 250 000 ₽
-                </span>
-              <span>Цель: снять клип до конца осени.</span>
-            </div>
+<div class="fundraising-stats">
+  <span class="fundraising-amount">
+    Собрано:
+    <strong id="fundraisingCurrent" data-amount="250000">250 000 ₽</strong>
+    <br class="fundraising-break">
+    из 250 000 ₽
+  </span>
+  <span>Цель: снять клип до конца осени.</span>
+</div>
 
             <a class="support-btn" href="https://pay.cloudtips.ru/p/ee1db799" target="_blank" rel="noopener">
               ✨ Поддержать
@@ -1219,6 +1252,7 @@ const fundraisingStages = [
         let dashOffset = 0;
         let dashLength = 1200;
         let animationFrame = null;
+        let lastCanvasWidth = 0;
 
         function getStageText(percent) {
             let result = fundraisingStages[0].text;
@@ -1230,25 +1264,54 @@ const fundraisingStages = [
             return result;
         }
 
-        function resizeCanvas() {
-            const ratio = window.devicePixelRatio || 1;
-            const container = canvas.parentElement.getBoundingClientRect();
-            const displayWidth = container.width;
-            const displayHeight = container.height;
+function resizeCanvas() {
+    const ratio = window.devicePixelRatio || 1;
+    const containerRect = canvas.parentElement.getBoundingClientRect();
+    const displayWidth = containerRect.width;
+    const displayHeight = displayWidth / 3.6; // та же пропорция, что в CSS
 
-            canvas.width = displayWidth * ratio;
-            canvas.height = displayHeight * ratio;
-            canvas.style.width = `${displayWidth}px`;
-            canvas.style.height = `${displayHeight}px`;
+    lastCanvasWidth = displayWidth;
 
-            ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-            const baseFont = Math.max(56, Math.min(displayWidth * 0.18, 110));
-            ctx.font = `${baseFont}px "Excalifont", sans-serif`;
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            dashLength = ctx.measureText(textToDraw).width * 1.4;
-            dashOffset = dashLength;
-        }
+    canvas.width = displayWidth * ratio;
+    canvas.height = displayHeight * ratio;
+    canvas.style.width = `${displayWidth}px`;
+    canvas.style.height = `${displayHeight}px`;
+
+    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    const baseFont = Math.max(48, Math.min(displayWidth * 0.18, 110));
+    ctx.font = `${baseFont}px "Excalifont", sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    dashLength = ctx.measureText(textToDraw).width * 1.4;
+    dashOffset = dashLength;
+}
+
+function playCanvasAnimation(force = false) {
+    const containerWidth = canvas.parentElement.getBoundingClientRect().width;
+
+    // Если изменилась только высота (из-за адресной строки), а ширина та же — не перезапускаем анимацию
+    if (!force && Math.abs(containerWidth - lastCanvasWidth) < 1) {
+        return;
+    }
+
+    cancelAnimationFrame(animationFrame);
+    textToDraw = getStageText(fundraisingPercent);
+    resizeCanvas();
+    drawFrame();
+}
+
+const debouncedResize = (() => {
+    let timeout;
+    return () => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+            playCanvasAnimation(false);
+        }, 180);
+    };
+})();
+
+window.addEventListener('resize', debouncedResize);
+document.fonts.ready.then(() => playCanvasAnimation(true));
 
         function drawFrame() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
