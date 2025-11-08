@@ -1096,8 +1096,18 @@ html {
         const nextBtn = document.getElementById('calendarNext');
         const eventDetails = document.getElementById('eventDetails');
 
-        const startDate = new Date(2025, 10, 1);
-        let activeOffset = 0;
+const startDate = new Date(2025, 10, 1);
+
+const today = new Date();
+
+let activeOffset = (today.getFullYear() - startDate.getFullYear()) * 12 +
+                   (today.getMonth() - startDate.getMonth());
+
+activeOffset = Math.max(0, activeOffset);
+
+let currentMonthElement = null;
+let selectedDayKey = null;
+
         let currentMonthElement = null;
         let selectedDayKey = null;
 
