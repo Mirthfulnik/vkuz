@@ -513,6 +513,12 @@ html {
             color: var(--color-gold);
         }
 
+        .calendar-day.performance.past {
+            opacity: 0.4;
+            filter: grayscale(0.25);
+            cursor: default;
+        }
+
         .event-wrapper {
             margin-top: -12px;
         }
@@ -611,6 +617,12 @@ html {
             font-size: 18px;
         }
 
+        .event-details-card.past-event {
+            opacity: 0.6;
+            filter: grayscale(0.15);
+        }
+
+
 @media (min-width: 1024px) {
     .calendar-section.section-card {
         padding: 24px 32px 24px;
@@ -639,6 +651,8 @@ html {
         font-size: 14px;
     }
 }
+
+
 
         /* Music */
         .music-section {
@@ -1081,6 +1095,50 @@ html {
         }
     }
 };
+
+        // "Сегодня" по московскому времени (Europe/Moscow)
+function getMoscowToday() {
+    const now = new Date();
+    const moscowString = now.toLocaleString('en-US', { timeZone: 'Europe/Moscow' });
+    const moscowNow = new Date(moscowString);
+    return new Date(moscowNow.getFullYear(), moscowNow.getMonth(), moscowNow.getDate());
+}
+
+const scheduleMonths = Object.keys(performanceSchedule).sort();
+const [firstYear, firstMonth] = scheduleMonths[0].split('-').map(Number);
+const startDate = new Date(firstYear, firstMonth - 1, 1);
+const moscowToday = getMoscowToday();
+
+function findNearestEvent(todayDate) {
+    let nearestFuture = null;
+    let latestPast = null;
+
+    scheduleMonths.forEach(monthKey => {
+        const [year, month] = monthKey.split('-').map(Number);
+        const daysObj = performanceSchedule[monthKey];
+        Object.keys(daysObj).forEach(dayStr => {
+            const day = Number(dayStr);
+            const dateObj = new Date(year, month - 1, day);
+            const meta = { monthKey, day, dateObj };
+
+            if (dateObj >= todayDate) {
+                if (!nearestFuture || dateObj < nearestFuture.dateObj) {
+                    nearestFuture = meta;
+                }
+            } else {
+                if (!latestPast || dateObj > latestPast.dateObj) {
+                    latestPast = meta;
+                }
+            }
+        });
+    });
+
+    // если все концерты в прошлом — берём самый последний
+    return nearestFuture || latestPast;
+}
+
+const nearestEvent = findNearestEvent(moscowToday);
+
         [
             '2025-12', '2026-01', '2026-02', '2026-03', '2026-04', '2026-05', '2026-06', '2026-07',
             '2026-08', '2026-09', '2026-10', '2026-11', '2026-12'
@@ -1090,23 +1148,23 @@ html {
             }
         });
 
-        const calendarStage = document.getElementById('calendarStage');
-        const monthLabel = document.getElementById('calendarMonthLabel');
-        const prevBtn = document.getElementById('calendarPrev');
-        const nextBtn = document.getElementById('calendarNext');
-        const eventDetails = document.getElementById('eventDetails');
+const calendarStage = document.getElementById('calendarStage');
+const monthLabel = document.getElementById('calendarMonthLabel');
+const prevBtn = document.getElementById('calendarPrev');
+const nextBtn = document.getElementById('calendarNext');
+const eventDetails = document.getElementById('eventDetails');
 
-const startDate = new Date(2025, 10, 1);
-
-const today = new Date();
-
-let activeOffset = (today.getFullYear() - startDate.getFullYear()) * 12 +
-                   (today.getMonth() - startDate.getMonth());
-
-activeOffset = Math.max(0, activeOffset);
-
+let activeOffset = 0;
 let currentMonthElement = null;
 let selectedDayKey = null;
+
+if (nearestEvent) {
+    activeOffset = (nearestEvent.dateObj.getFullYear() - startDate.getFullYear()) * 12 +
+                   (nearestEvent.dateObj.getMonth() - startDate.getMonth());
+    activeOffset = Math.max(0, activeOffset);
+
+    selectedDayKey = `${nearestEvent.monthKey}-${String(nearestEvent.day).padStart(2, '0')}`;
+}
 
         function getMonthDate(offset) {
             const date = new Date(startDate);
@@ -1162,35 +1220,42 @@ let selectedDayKey = null;
                 grid.appendChild(emptyCell);
             }
 
-            for (let day = 1; day <= daysInMonth; day += 1) {
-                const cell = document.createElement('button');
-                cell.type = 'button';
-                cell.className = 'calendar-day';
-                cell.textContent = day;
-                cell.setAttribute('aria-label', `${day} ${formatMonthLabel(date)}`);
+for (let day = 1; day <= daysInMonth; day += 1) {
+    const cell = document.createElement('button');
+    cell.type = 'button';
+    cell.className = 'calendar-day';
+    cell.textContent = day;
+    cell.setAttribute('aria-label', `${day} ${formatMonthLabel(date)}`);
 
-                if (monthKey === '2025-11' && day === 11) {
-                    cell.classList.add('pencil-ring');
-                }
+    const eventDate = new Date(date.getFullYear(), date.getMonth(), day);
+    const isPast = eventDate < moscowToday;
 
-                if (data[day]) {
-                    cell.classList.add('performance');
-                    if (data[day].special) {
-                        cell.classList.add('special');
-                    }
-                    const dayKey = `${monthKey}-${String(day).padStart(2, '0')}`;
-                    cell.dataset.dayKey = dayKey;
-                    cell.addEventListener('click', () => {
-                        selectedDayKey = dayKey;
-                        showEventDetails(date, day);
-                        highlightSelectedDay();
-                    });
-                } else {
-                    cell.disabled = true;
-                }
+    if (monthKey === '2025-11' && day === 11) {
+        cell.classList.add('pencil-ring');
+    }
 
-                grid.appendChild(cell);
-            }
+    if (data[day]) {
+        cell.classList.add('performance');
+        if (isPast) {
+            cell.classList.add('past');
+        }
+        if (data[day].special) {
+            cell.classList.add('special');
+        }
+        const dayKey = `${monthKey}-${String(day).padStart(2, '0')}`;
+        cell.dataset.dayKey = dayKey;
+        cell.addEventListener('click', () => {
+            selectedDayKey = dayKey;
+            showEventDetails(date, day);
+            highlightSelectedDay();
+        });
+    } else {
+        cell.disabled = true;
+    }
+
+    grid.appendChild(cell);
+}
+
 
             monthElement.appendChild(weekdaysRow);
             monthElement.appendChild(grid);
@@ -1207,22 +1272,23 @@ let selectedDayKey = null;
             eventDetails.innerHTML = `<div class="event-details-card event-empty">Пока нет подтвержденных выступлений в этом месяце — следите за обновлениями!</div>`;
         }
 
-        function showEventDetails(date, dayNumber) {
-            const monthKey = getMonthKey(date);
-            const dayData = (performanceSchedule[monthKey] || {})[dayNumber];
-            if (!dayData) {
-                showEmptyState();
-                return;
-            }
+function showEventDetails(date, dayNumber) {
+    const monthKey = getMonthKey(date);
+    const dayData = (performanceSchedule[monthKey] || {})[dayNumber];
+    if (!dayData) {
+        showEmptyState();
+        return;
+    }
 
-            const dateObj = new Date(date.getFullYear(), date.getMonth(), dayNumber);
-            const weekDayIndex = (dateObj.getDay() + 6) % 7;
+    const dateObj = new Date(date.getFullYear(), date.getMonth(), dayNumber);
+    const isPast = dateObj < moscowToday;
+    const weekDayIndex = (dateObj.getDay() + 6) % 7;
             const weekdays = ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'];
             const formattedDate = `${String(dayNumber).padStart(2, '0')} ${capitalise(monthNames[date.getMonth()])}`;
             const mapsQuery = encodeURIComponent(dayData.address);
 
-            eventDetails.innerHTML = `
-                <div class="event-details-card">
+          eventDetails.innerHTML = `
+                <div class="event-details-card ${isPast ? 'past-event' : ''}">
                     <div class="event-details-top">
                         <div class="event-info">
                             <span class="event-date">${formattedDate} (${weekdays[weekDayIndex]})</span>
