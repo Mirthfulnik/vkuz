@@ -1390,14 +1390,10 @@ function drawWord() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     const isMobile = logicalWidth < 480;
-    const strokeThickness = isMobile ? 6 : 10;
     const blur = isMobile ? 16 : 24;
 
-    const activeColor = '#F294C0';                       // розовые буквы
-    const inactiveColor = 'rgba(248, 245, 255, 0.35)';   // серые буквы
-
-    ctx.lineJoin = 'round';
-    ctx.lineCap = 'round';
+    const activeColor = '#F294C0';                     // розовые буквы
+    const inactiveColor = 'rgba(248, 245, 255, 0.35)'; // серые буквы
 
     const letters = fullWord.split('');
     const metrics = letters.map(ch => ctx.measureText(ch).width);
@@ -1413,15 +1409,26 @@ function drawWord() {
     letters.forEach((ch, index) => {
         const isActive = index < coloredLettersCount;
 
-        ctx.shadowBlur = isActive ? blur : 0;
-        ctx.shadowColor = isActive ? 'rgba(242, 148, 192, 0.6)' : 'transparent';
-        ctx.lineWidth = strokeThickness;
-        ctx.strokeStyle = isActive ? activeColor : inactiveColor;
+        const posX = x;
 
-        ctx.strokeText(ch, x, y);
+        // базовый серый текст — один и тот же для всех букв
+        ctx.shadowBlur = 0;
+        ctx.shadowColor = 'transparent';
+        ctx.fillStyle = inactiveColor;
+        ctx.fillText(ch, posX, y);
+
+        // поверх — розовый с glow для активных букв
+        if (isActive) {
+            ctx.shadowBlur = blur;
+            ctx.shadowColor = 'rgba(242, 148, 192, 0.6)';
+            ctx.fillStyle = activeColor;
+            ctx.fillText(ch, posX, y);
+        }
+
         x += metrics[index] + letterSpacing;
     });
 }
+
 
 function renderFundraisingWord(force = false) {
     if (!canvas) return;
