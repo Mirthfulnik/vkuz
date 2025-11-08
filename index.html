@@ -282,27 +282,49 @@ html {
         }
 
         .support-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            padding: 16px 32px;
-            border-radius: var(--radius-pill);
-            border: 1px solid transparent;
-            background: linear-gradient(120deg, rgba(242, 148, 192, 0.18), rgba(242, 197, 61, 0.18));
-            color: var(--color-text-primary);
-            text-decoration: none;
-            font-size: 18px;
-            transition: transform var(--transition-duration) var(--transition-snappy),
-                        box-shadow var(--transition-duration) var(--transition-snappy),
-                        border-color var(--transition-duration) var(--transition-snappy);
-        }
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 16px 32px;
+    border-radius: var(--radius-pill);
+    border: 1px solid transparent;
+    background: linear-gradient(120deg,
+        rgba(242, 148, 192, 0.22),
+        rgba(242, 197, 61, 0.22),
+        rgba(242, 148, 192, 0.22)
+    );
+    background-size: 220% 220%;
+    color: var(--color-text-primary);
+    text-decoration: none;
+    font-size: 18px;
+    transition: transform var(--transition-duration) var(--transition-snappy),
+                box-shadow var(--transition-duration) var(--transition-snappy),
+                border-color var(--transition-duration) var(--transition-snappy),
+                background-position 2s ease-in-out;
+    animation: supportGlow 4s ease-in-out infinite;
+}
 
-        .support-btn:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 18px 30px rgba(242, 148, 192, 0.25);
-            border-color: rgba(242, 148, 192, 0.6);
-        }
+.support-btn:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 30px rgba(242, 148, 192, 0.35);
+    border-color: rgba(242, 148, 192, 0.7);
+}
+
+        @keyframes supportGlow {
+    0% {
+        background-position: 0% 50%;
+        box-shadow: 0 0 0 rgba(242, 148, 192, 0);
+    }
+    50% {
+        background-position: 100% 50%;
+        box-shadow: 0 0 18px rgba(242, 148, 192, 0.55);
+    }
+    100% {
+        background-position: 0% 50%;
+        box-shadow: 0 0 0 rgba(242, 148, 192, 0);
+    }
+}
 
         /* Calendar */
         .calendar-section {
@@ -345,6 +367,12 @@ html {
     }
 }
 
+        @media (max-width: 600px) {
+    .calendar-controls {
+        margin-top: -20px; /* ближе к сетке календаря */
+    }
+}
+        
         .calendar-nav {
             width: 48px;
             height: 48px;
