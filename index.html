@@ -72,16 +72,7 @@
         
 html {
     background-color: #020714; /* основной ночной цвет */
-}
-
- <header class="site-header desktop-only">
-  <nav class="site-nav">
-    <a href="#supportTitle">Поддержать</a>
-    <a href="#calendarTitle">Выступления</a>
-    <a href="#musicTitle">Слушать</a>
-    <a href="#contacts">Контакты</a>
-  </nav>
-</header>       
+}       
 
         body {
             min-height: 100vh;
@@ -1004,9 +995,127 @@ html { scroll-behavior: smooth; }
             font-size: 14px;
             letter-spacing: 1px;
         }
+@media (min-width: 1024px) {
+  .page { padding-top: calc(clamp(32px, 4vw, 64px) + 64px); }
+}
+        /* по умолчанию моб. блок виден только на узких экранах */
+.mobile-only { display: block; }
+@media (min-width: 1024px) { .mobile-only { display: none; } }
+
+/* шапка на мобилках (занимает место в потоке, не перекрывает контент) */
+.site-header-mobile {
+  position: sticky;
+  top: 0;
+  z-index: 1100;
+  background: rgba(2, 7, 20, 0.8);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid rgba(242, 148, 192, 0.12);
+}
+
+/* верхняя полоска с бургером */
+.mobile-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+}
+
+/* бургер */
+.burger {
+  width: 40px; height: 40px;
+  display: grid; place-items: center;
+  background: transparent;
+  border: 1px solid rgba(242,148,192,0.22);
+  border-radius: 12px;
+}
+.burger span {
+  display: block;
+  width: 18px; height: 2px;
+  background: #F294C0;
+  margin: 2px 0;
+}
+
+/* выпадающее меню: слайд сверху */
+.mobile-menu {
+  position: fixed;
+  left: 0; right: 0; top: 0;
+  transform: translateY(-100%);
+  transition: transform .28s ease, opacity .28s ease;
+  background: rgba(2, 7, 20, 0.96);
+  border-bottom: 1px solid rgba(242,148,192,0.14);
+  padding: 12px 14px 6px;
+  z-index: 1200;
+  opacity: 0;
+}
+.mobile-menu.open {
+  transform: translateY(0);
+  opacity: 1;
+}
+.mobile-nav a {
+  display: block;
+  padding: 12px 6px;
+  font-family: var(--font-family-base);
+  color: #F294C0;
+  text-decoration: none;
+  font-size: 16px;
+  letter-spacing: 0.2px;
+}
+.mobile-nav a + a { border-top: 1px dashed rgba(242,148,192,0.18); }
+
+/* затемнение вокруг меню */
+.mobile-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(2,7,20,0.55);
+  z-index: 1190;
+  opacity: 0;
+  transition: opacity .28s ease;
+}
+.mobile-overlay.show { opacity: 1; }
+
+/* чтобы якоря не прятались под шапкой на мобилках */
+@media (max-width: 1023.98px) {
+  .section-title[id] { scroll-margin-top: 80px; }
+}
+
+/* для компактности: ещё чуть ближе кнопки к календарю на мобилках (если хочешь) */
+@media (max-width: 600px) {
+  .calendar-controls { margin-top: -20px; }
+}
     </style>
 </head>
 <body>
+    <header class="site-header desktop-only">
+  <nav class="site-nav">
+    <a href="#supportTitle">Поддержать</a>
+    <a href="#calendarTitle">Выступления</a>
+    <a href="#musicTitle">Слушать</a>
+    <a href="#contacts">Контакты</a>
+  </nav>
+</header>
+    <header class="site-header-mobile mobile-only">
+  <div class="mobile-bar">
+    <button id="mobileMenuButton"
+            class="burger"
+            aria-label="Открыть меню"
+            aria-expanded="false"
+            aria-controls="mobileMenu">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="mobile-brand"></div>
+  </div>
+
+  <div id="mobileMenu" class="mobile-menu" hidden>
+    <nav class="mobile-nav" role="menu">
+      <a href="#supportTitle"  role="menuitem">Поддержать</a>
+      <a href="#calendarTitle" role="menuitem">Выступления</a>
+      <a href="#musicTitle"    role="menuitem">Слушать</a>
+      <a href="#contacts"      role="menuitem">Контакты</a>
+    </nav>
+  </div>
+
+  <div id="mobileMenuOverlay" class="mobile-overlay" hidden></div>
+</header>
     <div class="page">
         <header class="hero">
             <div class="hero-inner">
@@ -1117,7 +1226,11 @@ html { scroll-behavior: smooth; }
             </div>
         </section>
 
-        <footer>© 2025 Варя Кузнецова. Все права защищены.</footer>
+        <footer id="contacts" class="site-footer">
+  <div>По всем вопросам: <a href="https://t.me/alekseevnavarvara" target="_blank" rel="noopener">@alekseevnavarvara</a></div>
+  <div style="margin-top:10px; color:var(--color-text-muted); font-size:14px;">© 2025 Варя Кузнецова</div>
+</footer>
+
     </div>
 
     <audio id="audioElement" preload="metadata"></audio>
@@ -1779,9 +1892,51 @@ document.fonts.ready.then(() => renderFundraisingWord(true));
 
         loadTrack(0, false);
     </script>
-    <footer id="contacts" class="site-footer">
-  По всем вопросам:
-  <a href="https://t.me/alekseevnavarvara" target="_blank" rel="noopener">@alekseevnavarvara</a>
-</footer>
+    <script>
+  (function () {
+    const btn = document.getElementById('mobileMenuButton');
+    const menu = document.getElementById('mobileMenu');
+    const overlay = document.getElementById('mobileMenuOverlay');
+    if (!btn || !menu || !overlay) return;
+
+    const links = menu.querySelectorAll('a');
+
+    function openMenu() {
+      btn.setAttribute('aria-expanded', 'true');
+      menu.hidden = false;
+      overlay.hidden = false;
+      // малую задержку, чтобы анимация сработала после unhide
+      requestAnimationFrame(() => {
+        menu.classList.add('open');
+        overlay.classList.add('show');
+      });
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeMenu() {
+      btn.setAttribute('aria-expanded', 'false');
+      menu.classList.remove('open');
+      overlay.classList.remove('show');
+      // закрываем после анимации
+      setTimeout(() => {
+        menu.hidden = true;
+        overlay.hidden = true;
+      }, 280);
+      document.body.style.overflow = '';
+    }
+
+    function toggleMenu() {
+      const expanded = btn.getAttribute('aria-expanded') === 'true';
+      expanded ? closeMenu() : openMenu();
+    }
+
+    btn.addEventListener('click', toggleMenu);
+    overlay.addEventListener('click', closeMenu);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeMenu();
+    });
+    links.forEach(a => a.addEventListener('click', closeMenu));
+  })();
+</script>
 </body>
 </html>
