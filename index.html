@@ -1082,6 +1082,33 @@ html { scroll-behavior: smooth; }
 @media (max-width: 600px) {
   .calendar-controls { margin-top: -20px; }
 }
+/* solid gold title instead of gradient */
+.artist-name {
+  background: none !important;
+  -webkit-text-fill-color: var(--color-gold) !important;
+  color: var(--color-gold) !important;
+}
+        /* центрируем пункты меню */
+.mobile-nav a { text-align: center; }
+
+/* убираем разделительные линии */
+.mobile-nav a + a { border-top: 0 !important; }
+
+/* делаем шапку на мобильных прозрачной */
+.site-header-mobile {
+  background: transparent !important;
+  border-bottom: 0 !important;
+  backdrop-filter: none !important;
+}
+
+/* анимация бургера в крестик */
+.burger { position: relative; }
+.burger span {
+  transition: transform .25s var(--transition-snappy), opacity .25s var(--transition-snappy);
+}
+.burger.is-open span:nth-child(1) { transform: translateY(4px) rotate(45deg); }
+.burger.is-open span:nth-child(2) { opacity: 0; }
+.burger.is-open span:nth-child(3) { transform: translateY(-4px) rotate(-45deg); }
     </style>
 </head>
 <body>
@@ -1125,7 +1152,7 @@ html { scroll-behavior: smooth; }
                     </div>
                 </div>
                 <div class="hero-copy">
-                    <h1 class="artist-name"></h1>
+                    <h1 class="artist-name">Варя Кузнецова</h1>
                 </div>
             </div>
         </header>
@@ -1892,7 +1919,7 @@ document.fonts.ready.then(() => renderFundraisingWord(true));
 
         loadTrack(0, false);
     </script>
-    <script>
+  <script>
   (function () {
     const btn = document.getElementById('mobileMenuButton');
     const menu = document.getElementById('mobileMenu');
@@ -1903,9 +1930,9 @@ document.fonts.ready.then(() => renderFundraisingWord(true));
 
     function openMenu() {
       btn.setAttribute('aria-expanded', 'true');
+      btn.classList.add('is-open');           // ← добавили
       menu.hidden = false;
       overlay.hidden = false;
-      // малую задержку, чтобы анимация сработала после unhide
       requestAnimationFrame(() => {
         menu.classList.add('open');
         overlay.classList.add('show');
@@ -1915,9 +1942,9 @@ document.fonts.ready.then(() => renderFundraisingWord(true));
 
     function closeMenu() {
       btn.setAttribute('aria-expanded', 'false');
+      btn.classList.remove('is-open');        // ← добавили
       menu.classList.remove('open');
       overlay.classList.remove('show');
-      // закрываем после анимации
       setTimeout(() => {
         menu.hidden = true;
         overlay.hidden = true;
@@ -1932,9 +1959,7 @@ document.fonts.ready.then(() => renderFundraisingWord(true));
 
     btn.addEventListener('click', toggleMenu);
     overlay.addEventListener('click', closeMenu);
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeMenu();
-    });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMenu(); });
     links.forEach(a => a.addEventListener('click', closeMenu));
   })();
 </script>
