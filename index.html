@@ -74,6 +74,15 @@ html {
     background-color: #020714; /* основной ночной цвет */
 }
 
+ <header class="site-header desktop-only">
+  <nav class="site-nav">
+    <a href="#supportTitle">Поддержать</a>
+    <a href="#calendarTitle">Выступления</a>
+    <a href="#musicTitle">Слушать</a>
+    <a href="#contacts">Контакты</a>
+  </nav>
+</header>       
+
         body {
             min-height: 100vh;
             font-family: var(--font-family-base);
@@ -929,6 +938,65 @@ html {
             text-transform: uppercase;
         }
 
+        /* Гладкий скролл к якорям */
+html { scroll-behavior: smooth; }
+
+/* По умолчанию прячем хедер, показываем на ПК */
+.desktop-only { display: none; }
+
+@media (min-width: 1024px) {
+  .desktop-only { display: block; }
+
+  .site-header {
+    position: sticky; /* остаётся сверху при прокрутке */
+    top: 0;
+    z-index: 1000;
+    backdrop-filter: blur(6px);
+    background: rgba(2, 7, 20, 0.65);
+    border-bottom: 1px solid rgba(242, 148, 192, 0.12);
+  }
+
+  .site-nav {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 12px 20px;
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+  }
+
+  .site-nav a {
+    font-family: var(--font-family-base);
+    color: #F294C0;
+    text-decoration: none;
+    font-size: 16px;
+    letter-spacing: 0.2px;
+    transition: opacity .2s ease;
+  }
+
+  .site-nav a:hover { opacity: 0.8; }
+
+  /* Чтобы якоря не прятались под хедер: отступ при прокрутке */
+  .section-title[id] { scroll-margin-top: 80px; }
+}
+
+/* Футер */
+.site-footer {
+  margin-top: 40px;
+  padding: 24px 16px;
+  text-align: center;
+  border-top: 1px solid rgba(242, 148, 192, 0.14);
+  color: var(--color-text-primary);
+}
+
+.site-footer a {
+  color: #F294C0;
+  text-decoration: none;
+}
+
+.site-footer a:hover { text-decoration: underline; }
+
+
         footer {
             margin-top: clamp(60px, 8vw, 100px);
             text-align: center;
@@ -956,7 +1024,7 @@ html {
         <section class="fundraising section-card">
           <div class="fundraising-content">
             <div>
-            <h2 class="section-title">Собираю на съемки клипа</h2>
+            <h2 id="supportTitle" class="section-title">Собираю на съемки клипа</h2>
             </div>
 
             <div class="fundraising-canvas">
@@ -1711,5 +1779,9 @@ document.fonts.ready.then(() => renderFundraisingWord(true));
 
         loadTrack(0, false);
     </script>
+    <footer id="contacts" class="site-footer">
+  По всем вопросам:
+  <a href="https://t.me/alekseevnavarvara" target="_blank" rel="noopener">@alekseevnavarvara</a>
+</footer>
 </body>
 </html>
