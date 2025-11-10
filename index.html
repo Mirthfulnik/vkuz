@@ -1338,8 +1338,8 @@ html { scroll-behavior: smooth; }
                         <img id="trackCover" src="images/holodno.png" alt="Обложка выбранного трека" />
                     </div>
                     <div class="now-playing-info">
-                        <audio id="mainAudio" span class="now-playing-label">Сейчас звучит></audio>
-                        <h3 id="trackTitle" class="track-title">Выберите трек из списка</h3>
+                          <span id="nowPlayingTitle" class="now-playing-label">Сейчас звучит</span>
+                          <h3 id="trackTitle" class="track-title">Выберите трек из списка</h3>
                         <span id="trackArtist" class="track-artist"></span>
                         <div class="progress-bar">
                             <input id="seekBar" class="seek" type="range" min="0" max="100" value="0" step="0.1" aria-label="Перемотка трека">
@@ -2215,20 +2215,21 @@ document.fonts.ready.then(() => renderFundraisingWord(true));
 </script>
 <script>
   (function(){
-    const audio = document.getElementById('mainAudio') || document.querySelector('audio');
-    const root  = document.body; // класс вешаем на body
+    const audio = document.getElementById('audioElement'); // реальный плеер
+    const root  = document.body;
     if(!audio) return;
 
     function onPlay(){ root.classList.add('player-playing'); }
     function onStop(){ root.classList.remove('player-playing'); }
 
-    audio.addEventListener('play', onPlay);
+    audio.addEventListener('play',  onPlay);
     audio.addEventListener('pause', onStop);
     audio.addEventListener('ended', onStop);
 
-    // если уже играет (автовоспроизведение/возврат на страницу)
-    if(!audio.paused) onPlay();
+    // если уже играет (например, после автоперехода к следующему треку)
+    if(!audio.paused && !audio.ended) onPlay();
   })();
 </script>
+
 </body>
 </html>
