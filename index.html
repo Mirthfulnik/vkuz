@@ -1204,6 +1204,25 @@ html { scroll-behavior: smooth; }
 
 /* чтобы якоря не прятались под десктоп-хедером */
 @media (min-width: 1024px){ .section-title[id]{ scroll-margin-top: 90px; } }
+        /* Cookie banner: на ПК кнопки справа от текста */
+@media (min-width: 1024px) {
+  .cookie-inner{
+    display: flex;
+    align-items: center;
+    gap: 16px;                /* расстояние между текстом и кнопками */
+  }
+  .cookie-inner p{
+    margin: 0;
+    flex: 1 1 auto;           /* текст занимает всё доступное слева */
+    min-width: 0;             /* позволяет корректно переносить строки */
+  }
+  .cookie-actions{
+    margin-top: 0;            /* убираем отступ сверху */
+    flex: 0 0 auto;           /* ширина по контенту (кнопкам) */
+    display: flex;
+    gap: 10px;                /* расстояние между кнопками */
+  }
+}
     </style>
 </head>
 <body>
