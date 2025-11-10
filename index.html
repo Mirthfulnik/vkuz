@@ -1109,6 +1109,23 @@ html { scroll-behavior: smooth; }
 .burger.is-open span:nth-child(1) { transform: translateY(4px) rotate(45deg); }
 .burger.is-open span:nth-child(2) { opacity: 0; }
 .burger.is-open span:nth-child(3) { transform: translateY(-4px) rotate(-45deg); }
+
+  .site-footer .footer-made {
+  margin-top: 6px;                    /* под «Все права защищены» */
+  font-family: var(--font-family-base);
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.6);    /* серый; можно заменить на var(--color-text-muted) */
+}
+
+.site-footer .footer-made-link {
+  color: inherit;                      /* тот же серый */
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.site-footer .footer-made-link:hover {
+  opacity: .85;
+}
     </style>
 </head>
 <body>
@@ -1256,7 +1273,9 @@ html { scroll-behavior: smooth; }
         <footer id="contacts" class="site-footer">
   <div>По всем вопросам: <a href="https://t.me/alekseevnavarvara" target="_blank" rel="noopener">@alekseevnavarvara</a></div>
   <div style="margin-top:10px; color:var(--color-text-muted); font-size:14px;">© 2025 Варя Кузнецова. Все права защищены.</div>
-</footer>
+  <div class="footer-made">Изготовлено<a class="footer-made-link" href="https://vibecard.ru/?utm_source=site&utm_medium=cpc&utm_campaign=varia_kuz&utm_content=link" target="_blank" rel="noopener">VibeCard</a>
+  </div>
+        </footer>
 
     </div>
 
