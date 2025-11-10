@@ -1223,6 +1223,20 @@ html { scroll-behavior: smooth; }
     gap: 10px;                /* расстояние между кнопками */
   }
 }
+        /* Кнопка-логотип Telegram в футере */
+.tg-chip{
+  display:inline-flex; align-items:center; justify-content:center;
+  height:30px; width:36px; padding:0; margin-left:10px;
+  border:1px solid var(--color-gold); border-radius:12px;
+  background: transparent; text-decoration:none; transition:transform .15s ease;
+  vertical-align:middle;
+}
+.tg-chip:hover{ transform: translateY(-1px); }
+.tg-chip img{ display:block; width:22px; height:22px; }
+/* По умолчанию скрыто */
+#nowPlayingTitle{ display:none; }
+/* Когда плеер играет — показываем */
+.player-playing #nowPlayingTitle{ display:block; }
     </style>
 </head>
 <body>
@@ -1324,7 +1338,7 @@ html { scroll-behavior: smooth; }
                         <img id="trackCover" src="images/holodno.png" alt="Обложка выбранного трека" />
                     </div>
                     <div class="now-playing-info">
-                        <span class="now-playing-label">Сейчас звучит</span>
+                        <audio id="mainAudio" span class="now-playing-label">Сейчас звучит></audio>
                         <h3 id="trackTitle" class="track-title">Выберите трек из списка</h3>
                         <span id="trackArtist" class="track-artist"></span>
                         <div class="progress-bar">
@@ -1369,6 +1383,16 @@ html { scroll-behavior: smooth; }
 
         <footer id="contacts" class="site-footer">
   <div>По всем вопросам: <a href="https://t.me/alekseevnavarvara" target="_blank" rel="noopener">@alekseevnavarvara</a></div>
+<a class="tg-chip"
+   href="https://t.me/+wxgE7OEOnawzM2Vi"
+   target="_blank" rel="noopener" aria-label="Telegram канал">
+  <picture>
+    <source srcset="images/Telegram_logo.webp" type="image/webp">
+    <!-- если позже сделаешь PNG, просто положи images/telegram.png -->
+    <img src="images/telegram.png" width="22" height="22" alt="" loading="lazy" decoding="async">
+  </picture>
+</a>
+
   <div class="footer-privacy">
   <button type="button" class="privacy-link" data-open-policy>Политика конфиденциальности</button>
 </div>
@@ -2187,6 +2211,23 @@ document.fonts.ready.then(() => renderFundraisingWord(true));
       localStorage.setItem(KEY,'declined');
       hide(); // аналитика не грузится
     });
+  })();
+</script>
+<script>
+  (function(){
+    const audio = document.getElementById('mainAudio') || document.querySelector('audio');
+    const root  = document.body; // класс вешаем на body
+    if(!audio) return;
+
+    function onPlay(){ root.classList.add('player-playing'); }
+    function onStop(){ root.classList.remove('player-playing'); }
+
+    audio.addEventListener('play', onPlay);
+    audio.addEventListener('pause', onStop);
+    audio.addEventListener('ended', onStop);
+
+    // если уже играет (автовоспроизведение/возврат на страницу)
+    if(!audio.paused) onPlay();
   })();
 </script>
 </body>
