@@ -1146,6 +1146,64 @@ html { scroll-behavior: smooth; }
   .mobile-brand { order: 1; }  /* слева */
   .burger       { order: 2; }  /* справа */
 }
+        /* --- footer link --- */
+.footer-privacy { margin-top: 8px; }
+.footer-privacy .privacy-link{
+  background: none; border: 0; padding: 0; cursor: pointer;
+  color: var(--color-text-primary, #F8F5FF); opacity: .8;
+  font-family: var(--font-family-base); text-decoration: underline; text-underline-offset: 3px;
+}
+.footer-privacy .privacy-link:hover{ opacity: 1; color: #F294C0; }
+
+/* --- policy modal --- */
+.policy-modal{ position: fixed; inset:0; z-index:1400; display:none; }
+.policy-modal[aria-hidden="false"]{ display:block; }
+.policy-backdrop{ position:absolute; inset:0; background:rgba(2,7,20,.65); }
+.policy-dialog{
+  position:relative; max-width:min(820px, 92vw); max-height:min(86vh, 1000px);
+  margin:6vh auto; background:linear-gradient(135deg,rgba(11,23,46,.96),rgba(6,13,32,.96));
+  border:1px solid rgba(242,148,192,.18); border-radius:20px; overflow:auto;
+  padding:22px 18px 18px;
+}
+.policy-close{
+  position:absolute; top:8px; right:10px; width:36px; height:36px;
+  border-radius:10px; border:1px solid rgba(242,148,192,.22);
+  background:transparent; color:#F8F5FF; cursor:pointer;
+}
+.policy-content{ color:#F8F5FF; font-family:var(--font-family-base); }
+.policy-content h2{ color:#F2C53D; margin:6px 0 8px; font-size:clamp(20px,3vw,26px); }
+.policy-content h3{ color:#F294C0; margin:16px 0 6px; font-size:18px; }
+.policy-content a{ color:#F294C0; text-decoration:none }
+.policy-content a:hover{ text-decoration:underline }
+.policy-content .muted{ color:rgba(248,245,255,.7) }
+
+/* --- cookie banner --- */
+.cookie-banner{
+  position: fixed; left: 12px; right: 12px; bottom: 12px; z-index:1500;
+  display: none;
+}
+.cookie-banner.show{ display:block; }
+.cookie-inner{
+  background:linear-gradient(135deg,rgba(11,23,46,.96),rgba(6,13,32,.96));
+  border:1px solid rgba(242,148,192,.18); border-radius:16px; padding:14px 14px;
+  color:#F8F5FF; font-family:var(--font-family-base); font-size:14px;
+}
+.cookie-actions{ display:flex; gap:10px; margin-top:10px; flex-wrap:wrap }
+.cookie-accept, .cookie-decline{
+  border-radius:999px; padding:10px 16px; cursor:pointer; border:1px solid transparent; background:transparent;
+  font-family:var(--font-family-base);
+}
+.cookie-accept{ background:rgba(242,148,192,.2); border-color:rgba(242,148,192,.45); color:#F8F5FF; }
+.cookie-accept:hover{ background:rgba(242,148,192,.3); }
+.cookie-decline{ border-color:rgba(248,245,255,.25); color:#F8F5FF; opacity:.8 }
+.cookie-decline:hover{ opacity:1 }
+.cookie-link{
+  color:#F294C0; background:none; border:0; padding:0; cursor:pointer;
+  text-decoration: underline; text-underline-offset:3px;
+}
+
+/* чтобы якоря не прятались под десктоп-хедером */
+@media (min-width: 1024px){ .section-title[id]{ scroll-margin-top: 90px; } }
     </style>
 </head>
 <body>
@@ -1292,6 +1350,9 @@ html { scroll-behavior: smooth; }
 
         <footer id="contacts" class="site-footer">
   <div>По всем вопросам: <a href="https://t.me/alekseevnavarvara" target="_blank" rel="noopener">@alekseevnavarvara</a></div>
+  <div class="footer-privacy">
+  <button type="button" class="privacy-link" data-open-policy>Политика конфиденциальности</button>
+</div>
   <div style="margin-top:10px; color:var(--color-text-muted); font-size:14px;">© 2025 Варя Кузнецова. Все права защищены.</div>
   <div class="footer-made">Изготовлено <a class="footer-made-link" href="https://vibecard.ru/?utm_source=site&utm_medium=cpc&utm_campaign=varia_kuz&utm_content=link" target="_blank" rel="noopener">VibeCard</a>
   </div>
@@ -2000,6 +2061,113 @@ document.fonts.ready.then(() => renderFundraisingWord(true));
     overlay.addEventListener('click', closeMenu);
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMenu(); });
     links.forEach(a => a.addEventListener('click', closeMenu));
+  })();
+</script>
+    <!-- Modal: Политика конфиденциальности -->
+<div class="policy-modal" id="policyModal" aria-hidden="true">
+  <div class="policy-backdrop" data-policy-close></div>
+  <div class="policy-dialog" role="dialog" aria-modal="true" aria-labelledby="policyTitle">
+    <button class="policy-close" type="button" aria-label="Закрыть" data-policy-close>✕</button>
+    <div class="policy-content">
+      <h2 id="policyTitle">Политика конфиденциальности</h2>
+      <p class="muted">Краткая версия. Полный текст доступен <a href="policy.html" target="_blank" rel="noopener">на отдельной странице</a>.</p>
+
+      <h3>Оператор</h3>
+      <p>Самозанятая <strong>Кузнецова Варвара Алексеевна</strong>.</p>
+
+      <h3>Какие данные</h3>
+      <p>Обезличенные данные: cookies, IP-адрес, сведения об устройстве и браузере, источнике перехода, событиях на сайте.</p>
+
+      <h3>Зачем</h3>
+      <ul>
+        <li>Аналитика посещаемости, улучшение UX;</li>
+        <li>Измерение эффективности рекламы;</li>
+        <li>Работа функционала сайта.</li>
+      </ul>
+
+      <h3>Инструменты</h3>
+      <p>Яндекс.Метрика, Яндекс.Директ, ВК Реклама.</p>
+
+      <h3>Права пользователя</h3>
+      <p>Получать сведения об обработке, требовать уточнения/удаления данных, отзывать согласие. Связь: <a href="https://t.me/alekseevnavarvara" target="_blank" rel="noopener">@alekseevnavarvara</a>.</p>
+
+      <p>Полная редакция: <a href="policy.html" target="_blank" rel="noopener">policy.html</a></p>
+    </div>
+  </div>
+</div>
+    <!-- Cookie consent -->
+<div class="cookie-banner" id="cookieBanner" hidden>
+  <div class="cookie-inner">
+    <p>Мой сайт становится лучше благодаря «печенькам». Остаётесь со мной — значит, вы ими делитесь.
+      Подробности в <button class="cookie-link" data-open-policy>Политике</button>. Спасибо за угощение!</p>
+    <div class="cookie-actions">
+      <button class="cookie-accept" id="cookieAccept">Да, бери!</button>
+      <button class="cookie-decline" id="cookieDecline">Оставлю себе</button>
+    </div>
+  </div>
+</div>
+    <script>
+  // ===== Policy modal =====
+  (function(){
+    const modal = document.getElementById('policyModal');
+    if(!modal) return;
+    const openers = document.querySelectorAll('[data-open-policy]');
+    const closers = modal.querySelectorAll('[data-policy-close], .policy-close');
+
+    function openPolicy(){
+      modal.setAttribute('aria-hidden','false');
+      document.body.style.overflow='hidden';
+      // фокус на диалог
+      setTimeout(()=> modal.querySelector('.policy-close')?.focus(), 0);
+    }
+    function closePolicy(){
+      modal.setAttribute('aria-hidden','true');
+      document.body.style.overflow='';
+    }
+    openers.forEach(el=> el.addEventListener('click', openPolicy));
+    closers.forEach(el=> el.addEventListener('click', closePolicy));
+    document.addEventListener('keydown', e=>{ if(e.key==='Escape') closePolicy(); });
+  })();
+
+  // ===== Cookie consent =====
+  (function(){
+    const banner = document.getElementById('cookieBanner');
+    if(!banner) return;
+    const acceptBtn = document.getElementById('cookieAccept');
+    const declineBtn = document.getElementById('cookieDecline');
+
+    const KEY = 'cookieConsentVarvara';
+    const consent = localStorage.getItem(KEY);
+
+    function show(){ banner.hidden=false; banner.classList.add('show'); }
+    function hide(){ banner.classList.remove('show'); setTimeout(()=> banner.hidden=true, 280); }
+
+    // Подгрузка аналитики только после согласия
+    function loadAnalytics(){
+      // Яндекс.Метрика (пример): замените ID на ваш, если используется
+      // const ymScript = document.createElement('script');
+      // ymScript.src = 'https://mc.yandex.ru/metrika/tag.js';
+      // ymScript.async = true;
+      // document.head.appendChild(ymScript);
+      // ymScript.onload = function(){
+      //   window.ym = window.ym || function(){ (window.ym.a=window.ym.a||[]).push(arguments) };
+      //   ym(YOUR_ID, 'init', { clickmap:true, trackLinks:true, accurateTrackBounce:true, defer:true });
+      // };
+      // Аналогично можно подключать пиксели ВК/Директа.
+    }
+
+    if(consent === 'accepted'){ loadAnalytics(); }
+    else if(consent === 'declined'){ /* ничего не делаем */ }
+    else { show(); }
+
+    acceptBtn?.addEventListener('click', ()=>{
+      localStorage.setItem(KEY,'accepted');
+      hide(); loadAnalytics();
+    });
+    declineBtn?.addEventListener('click', ()=>{
+      localStorage.setItem(KEY,'declined');
+      hide(); // аналитика не грузится
+    });
   })();
 </script>
 </body>
