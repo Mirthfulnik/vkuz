@@ -1590,10 +1590,6 @@ for (let day = 1; day <= daysInMonth; day += 1) {
     const eventDate = new Date(date.getFullYear(), date.getMonth(), day);
     const isPast = eventDate < moscowToday;
 
-    if (monthKey === '2025-11' && day === 11) {
-        cell.classList.add('pencil-ring');
-    }
-
     if (data[day]) {
         cell.classList.add('performance');
         if (isPast) {
@@ -1888,7 +1884,6 @@ const debouncedResize = (() => {
 
 window.addEventListener('resize', debouncedResize);
 document.fonts.ready.then(() => renderFundraisingWord(true));
-<script>
 // Делает прямую ссылку из шэр-ссылки Dropbox
 function toDirectDropbox(url) {
   try {
@@ -1902,7 +1897,6 @@ function toDirectDropbox(url) {
     return u.toString();
   } catch { return url; }
 }
-</script>
         /* Audio player */
         const tracks = [
             {
