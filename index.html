@@ -42,22 +42,21 @@ _tmr.push({id: "3716134", type: "pageView", start: (new Date()).getTime()});
   <link rel="preconnect" href="https://dl.dropboxusercontent.com" crossorigin>
 
   <style>
+      @font-face{
+  font-family:'Excalifont-Regular';
+  src:url('fonts/your-font.woff2') format('woff2'),
+      url('fonts/your-font.woff') format('woff');
+  font-weight:100 900; /* или конкретные веса */
+  font-style:normal;
+  font-display:swap;
+}
     :root{
-      --bg:#020714;
-      --bg2:#0b1429;
-      --surface:rgba(14,22,45,.92);
-      --surface2:rgba(19,28,53,.9);
-      --border:rgba(242,148,192,.28);
-      --muted:rgba(248,245,255,.6);
-      --text:#F8F5FF;
-      --text2:rgba(248,245,255,.85);
-      --pink:#F294C0;
-      --gold:#F2C53D;
-      --shadow:0 20px 40px rgba(2,6,20,.35);
-      --r:20px;
-      --r-lg:28px;
-      --ff:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Ubuntu, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji', sans-serif;
-    }
+  /* верни свою семью шрифта; подставь имя из прошлой версии */
+  --font-family-base: 'Excalifont-Regular', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Ubuntu, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji', sans-serif;
+
+  /* и пусть вся типографика сайта ссылается на неё */
+  --ff: var(--font-family-base);
+}
 
     html,body{margin:0;padding:0;background:var(--bg);color:var(--text)}
     body{
