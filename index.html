@@ -9,33 +9,6 @@
     <!-- Android / PWA -->
     <link rel="manifest" href="icons/site.webmanifest">
     <meta name="theme-color" content="#020714">
-    <!-- Yandex.Metrika counter -->
-<script type="text/javascript">
-    (function(m,e,t,r,i,k,a){
-        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-        m[i].l=1*new Date();
-        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
-    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=105181388', 'ym');
-
-    ym(105181388, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", accurateTrackBounce:true, trackLinks:true});
-</script>
-<noscript><div><img src="https://mc.yandex.ru/watch/105181388" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-<!-- /Yandex.Metrika counter -->
-    <!-- Top.Mail.Ru counter -->
-<script type="text/javascript">
-var _tmr = window._tmr || (window._tmr = []);
-_tmr.push({id: "3716134", type: "pageView", start: (new Date()).getTime()});
-(function (d, w, id) {
-  if (d.getElementById(id)) return;
-  var ts = d.createElement("script"); ts.type = "text/javascript"; ts.async = true; ts.id = id;
-  ts.src = "https://top-fwz1.mail.ru/js/code.js";
-  var f = function () {var s = d.getElementsByTagName("script")[0]; s.parentNode.insertBefore(ts, s);};
-  if (w.opera == "[object Opera]") { d.addEventListener("DOMContentLoaded", f, false); } else { f(); }
-})(document, window, "tmr-code");
-</script>
-<noscript><div><img src="https://top-fwz1.mail.ru/counter?id=3716134;js=na" style="position:absolute;left:-9999px;" alt="Top.Mail.Ru" /></div></noscript>
-<!-- /Top.Mail.Ru counter -->
     <link rel="preconnect" href="https://dl.dropboxusercontent.com" crossorigin>
     <title>Официальный сайт автора-исполнителя Вари Кузнецовой</title>
 
@@ -683,6 +656,18 @@ html {
             display: block;
         }
 
+        .cover-frame { position: relative; }
+        .cover-frame img,
+        .cover-frame video{
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+       }
+       #trackCoverVideo{ display: none; } /* видео скрыто, пока трек не играет */
+    
         .cover-placeholder {
             width: 100%;
             height: 100%;
@@ -1290,12 +1275,50 @@ html { scroll-behavior: smooth; }
 .mobile-nav a.nav-support{
   margin-top: 18px !important; /* было 8px — делаем явный зазор */
 }
+    /* Левый блок с названием и бейджем — всегда слева, в одну строку */
+.track-item { 
+  display: flex; 
+  align-items: center; 
+  justify-content: space-between; 
+  gap: 12px; 
+}
+.track-left{
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;         /* ← позволяет блоку ужиматься */
+  flex: 1 1 auto;       /* ← левый блок растягивается, правый (длительность) — по содержимому */
+  text-align: left;
+}
+.track-title-name{
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;  /* ← на мобилках не переносим, а даём троеточие */
+}
+.track-badge{
+  flex: 0 0 auto;
+  font-size: 12px;
+  line-height: 1;
+  padding: 2px 8px;
+  border: 1px solid rgba(242,148,192,.45);
+  border-radius: 999px;
+  color: #F294C0;
+  background: rgba(242,148,192,.12);
+}
+
+/* На узких — ещё чуть компактнее, всё равно левый край и одна строка */
+@media (max-width: 640px){
+  .track-item{ gap: 10px; padding: 14px 16px; }
+  .track-title-name{ font-size: 16px; }
+  .track-badge{ font-size: 11px; padding: 2px 7px; }
+}
+
     </style>
 </head>
 <body>
     <header class="site-header desktop-only">
   <nav class="site-nav">
-    <a href="#musicTitle">Слушать</a>
+    <a href="#musicTitle">Сохранить</a>
     <a href="#calendarTitle">Выступления</a>
     <a href="#contacts">Контакты</a>
     <a href="https://pay.cloudtips.ru/p/ee1db799" class="nav-support" target="_blank" rel="noopener">✨ Поддержать</a>
@@ -1316,7 +1339,7 @@ html { scroll-behavior: smooth; }
 
     <div id="mobileMenu" class="mobile-menu" hidden>
     <nav class="mobile-nav" role="menu">
-      <a href="#musicTitle" role="menuitem">Слушать</a>
+      <a href="#musicTitle" role="menuitem">Сохранить</a>
       <a href="#calendarTitle" role="menuitem">Выступления</a>
       <a href="#contacts" role="menuitem">Контакты</a>
     </nav>
@@ -1343,8 +1366,9 @@ html { scroll-behavior: smooth; }
             </div>
             <div class="player-shell">
                 <div class="now-playing">
-                    <div class="cover-frame">
-                        <img id="trackCover" src="images/holodno.png" alt="Обложка выбранного трека" />
+                <div class="cover-frame">
+                      <img id="trackCoverImg" src="images/holodno.png" alt="Обложка выбранного трека">
+                      <video id="trackCoverVideo" muted playsinline loop preload="auto"></video>
                     </div>
                     <div class="now-playing-info">
                           <span id="nowPlayingTitle" class="now-playing-label">Сейчас звучит</span>
@@ -1369,23 +1393,23 @@ html { scroll-behavior: smooth; }
             <div class="streaming-grid" id="streamingLinks">
                 <a class="streaming-card" id="streamYandex" data-service="yandex" href="#" target="_blank" rel="noopener">
                     <span class="service-name">Яндекс Музыка</span>
-                    <span class="listen-chip">Слушать</span>
+                    <span class="listen-chip">Сохранить</span>
                 </a>
                 <a class="streaming-card" id="streamVK" data-service="vk" href="#" target="_blank" rel="noopener">
                     <span class="service-name">VK Музыка</span>
-                    <span class="listen-chip">Слушать</span>
+                    <span class="listen-chip">Сохранить</span>
                 </a>
                 <a class="streaming-card" id="streamMTS" data-service="mts" href="#" target="_blank" rel="noopener">
                     <span class="service-name">МТС Музыка</span>
-                    <span class="listen-chip">Слушать</span>
+                    <span class="listen-chip">Сохранить</span>
                 </a>
                 <a class="streaming-card" id="streamSpotify" data-service="spotify" href="#" target="_blank" rel="noopener">
                     <span class="service-name">Spotify</span>
-                    <span class="listen-chip">Слушать</span>
+                    <span class="listen-chip">Сохранить</span>
                 </a>
                 <a class="streaming-card" id="streamApple" data-service="apple" href="#" target="_blank" rel="noopener">
                     <span class="service-name">Apple Music</span>
-                    <span class="listen-chip">Слушать</span>
+                    <span class="listen-chip">Сохранить</span>
                 </a>
             </div>
         </section>
@@ -1436,7 +1460,7 @@ html { scroll-behavior: smooth; }
 
     </div>
 
-    <audio id="audioElement" preload="metadata"></audio>
+    <audio id="audioElement" preload="auto"></audio>
 
     <script>
         const monthNames = [
@@ -1840,19 +1864,33 @@ function toDirectDropbox(url) {
 
         /* Audio player */
         const tracks = [
-            {
-  title: 'Суки',
-  artist: 'Варя Кузнецова',
-  src: 'https://www.dropbox.com/scl/fi/h5bv9k0q4r9ysmcq45zho/Varya_Kuznecova_-_Suki_-TheMP3.Info.wav?rlkey=aqji9437wfpsgx1pw96u2pd6c&dl=0',
-  cover: 'images/Suki.png',
-  badge: 'ПРЕМЬЕРА!',
-  links: {
-    mts:     'https://music.mts.ru/album/39261991',
-    spotify: 'https://open.spotify.com/album/6dc8l7anhM2OFAMUfAnTdX',
-    vk:      'https://music.vk.com/link/uI0hm',
-    yandex:  'https://music.yandex.ru/album/39261991?utm_source=bandlink&utm_medium=%D0%92%D0%B0%D1%80%D1%8F%20%D0%9A%D1%83%D0%B7%D0%BD%D0%B5%D1%86%D0%BE%D0%B2%D0%B0&utm_campaign=%D0%A1%D1%83%D0%BA%D0%B8&utm_term=ZIGLl',
-  }
-},
+  {
+    title: 'Первое января',
+    artist: 'Варя Кузнецова',
+    src: 'https://www.dropbox.com/scl/fi/qdq2ga4h92be1ht3r6vbj/Varya_Kuznecova_-_Pervoye_Yanvarya_-TheMP3.Info.wav?rlkey=6ic34qp0yab4iyzuxspfqj6qo&st=pxki1ahw&dl=0',
+    cover: 'images/pervjan.png',
+    coverVideo: 'images/pervjan.mp4', // ← было coverGif, теперь mp4
+    badge: 'ПРЕМЬЕРА!',
+    links: {
+    yandex: 'https://music.yandex.ru/album/39768397?utm_source=bandlink&utm_medium=Варя%20Кузнецова&utm_campaign=Первое%20января&utm_term=MItxh',
+    vk: 'https://music.vk.com/link/c1jtf',
+    mts: 'https://music.mts.ru/album/39768397',
+    spotify: 'https://open.spotify.com/album/53xX1xd614NoIpnhMZ7Woz',
+    }
+  },
+  {
+    title: 'Суки',
+    artist: 'Варя Кузнецова',
+    src: 'https://www.dropbox.com/scl/fi/h5bv9k0q4r9ysmcq45zho/Varya_Kuznecova_-_Suki_-TheMP3.Info.wav?rlkey=aqji9437wfpsgx1pw96u2pd6c&dl=0',
+    cover: 'images/Suki.png',
+    // badge убран
+    links: {
+      mts: 'https://music.mts.ru/album/39261991',
+      spotify: 'https://open.spotify.com/album/6dc8l7anhM2OFAMUfAnTdX',
+      vk: 'https://music.vk.com/link/uI0hm',
+      yandex: 'https://music.yandex.ru/album/39261991?utm_source=bandlink&utm_medium=%D0%92%D0%B0%D1%80%D1%8F%20%D0%9A%D1%83%D0%B7%D0%BD%D0%B5%D1%86%D0%BE%D0%B2%D0%B0&utm_campaign=%D0%A1%D1%83%D0%BA%D0%B8&utm_term=ZIGLl',
+    }
+  },
             {
                 title: 'Холодно',
                 artist: 'Варя Кузнецова',
@@ -1881,7 +1919,8 @@ function toDirectDropbox(url) {
         ];
 
         const audio = document.getElementById('audioElement');
-        const trackCover = document.getElementById('trackCover');
+        const coverImg   = document.getElementById('trackCoverImg');
+        const coverVideo = document.getElementById('trackCoverVideo');
         const trackTitle = document.getElementById('trackTitle');
         const trackArtist = document.getElementById('trackArtist');
         const playPauseButton = document.getElementById('playPause');
@@ -1903,6 +1942,8 @@ function toDirectDropbox(url) {
         let isPlaying = false;
         const trackButtons = [];
 
+        
+
         function formatTime(seconds) {
             if (!Number.isFinite(seconds)) return '0:00';
             const mins = Math.floor(seconds / 60);
@@ -1913,6 +1954,44 @@ function toDirectDropbox(url) {
         function updatePlayPauseIcon() {
             playPauseButton.textContent = isPlaying ? '❚❚' : '▶';
         }
+
+function applyCoverByState() {
+  const t = tracks[currentTrackIndex];
+  const useVideo = isPlaying && t.coverVideo;
+
+
+function preloadCoverVideoFor(index){
+  const t = tracks[index];
+  if (!t?.coverVideo) return;
+  coverVideo.preload = 'auto';
+  if (coverVideo.src !== t.coverVideo) coverVideo.src = t.coverVideo;
+  coverVideo.load();
+}
+
+preloadCoverVideoFor(0);
+
+
+
+  if (useVideo) {
+    // показать видео, спрятать PNG
+    coverImg.style.display = 'none';
+    coverVideo.style.display = 'block';
+
+    if (coverVideo.src !== t.coverVideo) {
+      coverVideo.src = t.coverVideo;   // подменили источник
+      coverVideo.currentTime = 0;      // начать с начала
+    }
+    coverVideo.play().catch(() => {}); // на iOS ok, т.к. muted+playsinline
+  } else {
+    // показать PNG, спрятать видео
+    coverVideo.pause();
+    coverVideo.style.display = 'none';
+    coverImg.style.display = 'block';
+    coverImg.src = t.cover || 'images/holodno.png';
+    coverImg.alt = `Обложка трека «${t.title}»`;
+  }
+}
+
 
         function updateStreamingLinks(track) {
             Object.entries(streamingButtons).forEach(([service, button]) => {
@@ -1931,15 +2010,25 @@ function toDirectDropbox(url) {
             });
         }
 
-        function loadTrack(index, autoplay = false) {
-            const track = tracks[index];
-            currentTrackIndex = index;
-            audio.src = toDirectDropbox(track.src);
-            audio.crossOrigin = 'anonymous';
-            trackCover.src = track.cover ||'images/holodno.png';
-            trackCover.alt = `Обложка трека «${track.title}»`;
-            trackTitle.textContent = track.title;
-            trackArtist.textContent = track.artist || '';
+function loadTrack(index, autoplay = false) {
+  const track = tracks[index];
+  currentTrackIndex = index;
+
+  audio.crossOrigin = 'anonymous';
+  audio.src = toDirectDropbox(track.src);
+  audio.preload = 'auto';
+  audio.load(); // важно для предзагрузки
+
+  // Сброс видео/обложки
+  coverVideo.pause();
+  coverVideo.style.display = 'none';
+  coverImg.style.display = 'block';
+  coverImg.src = track.cover || 'images/holodno.png';
+  coverImg.alt = `Обложка трека «${track.title}»`;
+
+  applyCoverByState();
+  trackTitle.textContent = track.title;
+  trackArtist.textContent = track.artist || '';
             seekBar.value = 0;
             currentTimeEl.textContent = '0:00';
             totalTimeEl.textContent = '0:00';
@@ -1959,22 +2048,30 @@ function toDirectDropbox(url) {
             }
         }
 
-        tracks.forEach((track, index) => {
-            const button = document.createElement('button');
-            button.className = 'track-item';
-            button.type = 'button';
-            button.dataset.index = index;
-            button.innerHTML = `
-  <span>${track.title}${track.badge ? ' <span class="premiere-badge">'+track.badge+'</span>' : ''}</span>
-  <span class="track-duration" data-duration></span>
-`;
-            button.addEventListener('click', () => {
-                const needAutoplay = currentTrackIndex === index ? !isPlaying : true;
-                loadTrack(index, needAutoplay);
-            });
-            trackListEl.appendChild(button);
-            trackButtons.push(button);
-        });
+// Список треков (исправлено)
+tracks.forEach((track, index) => {
+  const button = document.createElement('button');
+  button.className = 'track-item';
+  button.type = 'button';
+  button.dataset.index = index;
+  button.innerHTML = `
+    <span class="track-left">
+      <span class="track-title-name">${track.title}</span>
+      ${track.badge ? `<span class="track-badge">${track.badge}</span>` : ''}
+    </span>
+    <span class="track-duration" data-duration>—:—</span>
+  `;
+
+  // клик по треку — загрузка/воспроизведение
+  button.addEventListener('click', () => {
+    const needAutoplay = currentTrackIndex === index ? !isPlaying : true;
+    loadTrack(index, needAutoplay);
+    applyCoverByState();
+  });
+
+  trackListEl.appendChild(button);
+  trackButtons.push(button);
+});
 
         playPauseButton.addEventListener('click', () => {
             if (!audio.src) {
@@ -1985,22 +2082,26 @@ function toDirectDropbox(url) {
                 audio.play().then(() => {
                     isPlaying = true;
                     updatePlayPauseIcon();
+                    applyCoverByState();
                 });
             } else {
                 audio.pause();
                 isPlaying = false;
                 updatePlayPauseIcon();
+                applyCoverByState(); 
             }
         });
 
         prevTrackButton.addEventListener('click', () => {
             const nextIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
             loadTrack(nextIndex, isPlaying);
+            applyCoverByState();
         });
 
         nextTrackButton.addEventListener('click', () => {
             const nextIndex = (currentTrackIndex + 1) % tracks.length;
             loadTrack(nextIndex, isPlaying);
+            applyCoverByState();
         });
 
         audio.addEventListener('loadedmetadata', () => {
@@ -2030,6 +2131,14 @@ function toDirectDropbox(url) {
         });
 
         loadTrack(0, false);
+        function warmupUrl(url) {
+          const direct = toDirectDropbox(url);
+          // прогреваем соединение: берём 1 байт (Range)
+          fetch(direct, { headers: { Range: 'bytes=0-0' } }).catch(()=>{});
+            }
+
+        warmupUrl(tracks[0].src);
+        if (tracks[1]) warmupUrl(tracks[1].src); // следующий трек тоже
     </script>
   <script>
   (function () {
